@@ -8,6 +8,8 @@ import os
 import uuid
 import openai
 from dotenv import load_dotenv
+from ai_processor import process_description
+from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -100,7 +102,14 @@ async def generate_workflow_from_description(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 async def generate_workflow_with_ai(description: str) -> Workflow:
-    """Generate a workflow structure based on a natural language description using AI."""
+    """Generate a workflow structure based on a natural language description."""
+    
+    # Check if OpenAI API key is available
+    if not openai.api_key:
+        # Use rule-based fallback if no API key
+        print("OpenAI API key not found. Using rule-based generation.")
+        workflow_data = process_description(description)
+        return Workflow(**workflow_data)
     
     # Define a system prompt that explains the task to the AI
     system_prompt = """
@@ -164,7 +173,19 @@ async def generate_workflow_with_ai(description: str) -> Workflow:
 # Serve static files (your HTML/CSS/JS frontend)
 app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your domains
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Run server if this file is executed directly
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    print("Starting API server...")
+    port = int(os.getenv("PORT", "8000"))
+    print(f"Using port: {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port) 
