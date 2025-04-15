@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n Workflow Composer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>n8n Workflow Composer</h1>
+    </header>
+    
+    <main class="composer-container">
+        <div class="workflow-editor">
+            <div class="editor-sidebar">
+                <div class="workflow-config">
+                    <h2>Workflow Configuration</h2>
+                    
+                    <div class="config-section">
+                        <h3>Workflow Details</h3>
+                        <div class="form-group">
+                            <label for="workflow-name">Name:</label>
+                            <input type="text" id="workflow-name" placeholder="My Workflow">
+                        </div>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h3>AI Workflow Generator</h3>
+                        <div class="form-group">
+                            <label for="workflow-description">Describe your workflow:</label>
+                            <textarea id="workflow-description" rows="4" placeholder="E.g., Create a workflow that fetches data from Twitter every hour and sends it to Slack"></textarea>
+                        </div>
+                        <button id="ai-generate-btn" class="primary-btn">Generate with AI</button>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h3>Add Node</h3>
+                        <div class="form-group">
+                            <label for="node-type">Node Type:</label>
+                            <select id="node-type">
+                                <option value="http">HTTP Request</option>
+                                <option value="function">Function</option>
+                                <option value="webhook">Webhook</option>
+                                <option value="schedule">Schedule</option>
+                                <!-- Add more node types as needed -->
+                            </select>
+                        </div>
+                        <button id="add-node-btn" class="primary-btn">Add Node</button>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h3>Nodes</h3>
+                        <div id="nodes-list" class="nodes-list">
+                            <!-- Nodes will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="generate-workflow-btn" class="primary-btn">Generate Workflow</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="code-preview">
+                <h2>Workflow Preview</h2>
+                <pre id="workflow-json" class="json-preview">
+// The workflow JSON will appear here
+</pre>
+            </div>
+        </div>
+    </main>
+    
+    <script src="app.js"></script>
+</body>
+</html> 
