@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
@@ -86,17 +86,25 @@ async def delete_workflow(workflow_id: str):
     del workflows[workflow_id]
     return {"message": "Workflow deleted"}
 
-# Add this new endpoint to your FastAPI app
+# Update your generate workflow endpoint
 @app.post("/api/generate-workflow/", response_model=Workflow, tags=["AI"])
-async def generate_workflow_from_description(request: dict):
-    description = request.get("description")
+async def generate_workflow_from_description(
+    request: dict = None,
+    description: str = Query(None, description="Workflow description in natural language")
+):
+    # Get description from query parameter or request body
+    desc = description
     
-    if not description:
-        raise HTTPException(status_code=400, detail="Workflow description is required")
+    # If no query parameter but body exists
+    if not desc and request and "description" in request:
+        desc = request.get("description")
+    
+    if not desc:
+        raise HTTPException(status_code=400, detail="Workflow description is required (provide in query or body)")
     
     try:
         # Call AI to generate workflow structure
-        workflow = await generate_workflow_with_ai(description)
+        workflow = await generate_workflow_with_ai(desc)
         return workflow
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
